@@ -36,9 +36,10 @@ jobs:
         run: |
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig
           export KUBECONFIG=kubeconfig
-          kubectl apply -f .github/k8s/deployment.yaml
-          kubectl apply -f .github/k8s/service.yaml
-          kubectl apply -f .github/k8s/virtualservice.yaml
+          for file in .github/k8s/*.yaml do
+            envsubst < "$file" > "${file%.yaml}-resolved.yaml"
+            kubectl apply -f "${file%.yaml}-resolved.yaml"
+          done
         env:
           APP_NAME: ${{ secrets.APP_NAME }}
           IMAGE: ${{ secrets.REGISTRY }}/${{ secrets.APP_NAME }}:latest
