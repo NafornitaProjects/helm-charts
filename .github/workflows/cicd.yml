@@ -37,3 +37,8 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig
           export KUBECONFIG=kubeconfig
           kubectl apply -f .github/k8s/deployment.yaml
+          kubectl apply -f .github/k8s/service.yaml
+          kubectl apply -f .github/k8s/virtualservice.yaml
+        env:
+          APP_NAME: ${{ secrets.APP_NAME }}
+          REGISTRY: ${{ secrets.REGISTRY }}
