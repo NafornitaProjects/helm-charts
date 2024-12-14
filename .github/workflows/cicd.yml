@@ -41,7 +41,7 @@ jobs:
         run: |
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig
           export KUBECONFIG=kubeconfig
-          for file in .github/k8s/*.yaml do
+          for file in .github/k8s/*.yaml; do
             envsubst < "$file" > "${file%.yaml}-resolved.yaml"
             kubectl apply -f "${file%.yaml}-resolved.yaml"
           done
