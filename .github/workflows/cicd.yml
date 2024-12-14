@@ -41,4 +41,4 @@ jobs:
           kubectl apply -f .github/k8s/virtualservice.yaml
         env:
           APP_NAME: ${{ secrets.APP_NAME }}
-          IMAGE: ${{ secrets.REGISTRY }}/${{ secrets.APP_NAME }}:latest
+          IMAGE: "${{ secrets.REGISTRY }}/${{ secrets.APP_NAME }}:latest"
