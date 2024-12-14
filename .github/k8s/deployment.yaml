@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: {{ APP_NAME }}
-          image: {{ REGISTRY }}/{{ APP_NAME }}:latest
+          image: {{ IMAGE }}
           ports:
             - containerPort: 8080
