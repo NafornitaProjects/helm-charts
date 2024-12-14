@@ -7,7 +7,7 @@ spec:
   hosts:
     - ${APP_NAME}.edwardnafornita.com
   gateways:
-    - ${APP_NAME}-gateway
+    - edwardnafornita-gateway
   http:
     - match:
         - port: 80
