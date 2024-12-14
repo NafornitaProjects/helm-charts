@@ -24,8 +24,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t registry.edwardnafornita.com/{{ APP_NAME }}:latest .
-          docker push registry.edwardnafornita.com/{{ APP_NAME }}:latest
+          docker build -t registry.edwardnafornita.com/${{ secrets.APP_NAME }}:latest .
+          docker push registry.edwardnafornita.com/${{ secrets.APP_NAME }}:latest
 
       - name: Setup Kubectl
         uses: azure/setup-kubectl@v3
@@ -41,4 +41,4 @@ jobs:
           kubectl apply -f .github/k8s/virtualservice.yaml
         env:
           APP_NAME: ${{ secrets.APP_NAME }}
-          IMAGE: "${{ secrets.REGISTRY }}/${{ secrets.APP_NAME }}:latest"
+          IMAGE: ${{ secrets.REGISTRY }}/${{ secrets.APP_NAME }}:latest
