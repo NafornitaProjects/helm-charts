@@ -27,24 +27,16 @@ jobs:
           docker build -t ${{ secrets.REGISTRY }}/${{ secrets.APP_NAME }}:latest .
           docker push ${{ secrets.REGISTRY }}/${{ secrets.APP_NAME }}:latest
 
-      - name: Setup Kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: latest
-
-      - name: Install envsubst
+      - name: Install Helm
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gettext
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
-      - name: Deploy to Kubernetes
+      - name: Deploy to Kubernetes with Helm
         run: |
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig
           export KUBECONFIG=kubeconfig
-          for file in .github/k8s/*.yaml; do
-            envsubst < "$file" > "${file%.yaml}-resolved.yaml"
-            kubectl apply -f "${file%.yaml}-resolved.yaml"
-          done
-        env:
-          APP_NAME: ${{ secrets.APP_NAME }}
-          IMAGE: ${{ secrets.REGISTRY }}/${{ secrets.APP_NAME }}:latest
+          helm upgrade --install ${{ secrets.APP_NAME }} ./helm-chart \
+            --namespace default \
+            --set image.repository=${{ secrets.REGISTRY }}/${{ secrets.APP_NAME }} \
+            --set image.tag=latest \
+            --set appName=${{ secrets.APP_NAME }}

@@ -1,16 +1,16 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: ${APP_NAME}-virtualservice
+  name: {{ .Values.appName }}-virtualservice
   namespace: istio-system
 spec:
   hosts:
-    - ${APP_NAME}.edwardnafornita.com
+    - {{ .Values.virtualService.host }}
   gateways:
-    - edwardnafornita-gateway
+    - {{ .Values.virtualService.gateway }}
   http:
     - match:
-        - port: 80
+        - port: {{ .Values.service.port }}
       redirect:
         scheme: https
     - match:
@@ -18,6 +18,6 @@ spec:
             prefix: /
       route:
         - destination:
-            host: ${APP_NAME}-service.default.svc.cluster.local
+            host: {{ .Values.appName }}-service.default.svc.cluster.local
             port:
-              number: 80
+              number: {{ .Values.service.port }}
