@@ -1,0 +1,32 @@
+app:
+  name: example-app
+  version: 1.0.0
+
+image:
+  repository: my-registry/example-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "256Mi"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+virtualService:
+  enabled: true
+  host: example-app.example.com
+  gateway: edwardnafornita-gateway
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

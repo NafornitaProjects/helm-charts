@@ -1,0 +1,23 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ .Values.appName }}-virtualservice
+  namespace: istio-system
+spec:
+  hosts:
+    - {{ .Values.virtualService.host }}
+  gateways:
+    - {{ .Values.virtualService.gateway }}
+  http:
+    - match:
+        - port: {{ .Values.service.port }}
+      redirect:
+        scheme: https
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: {{ .Values.appName }}-service.default.svc.cluster.local
+            port:
+              number: {{ .Values.service.port }}
