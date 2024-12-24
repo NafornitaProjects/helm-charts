@@ -76,17 +76,6 @@ jobs:
         run: |
           git push origin main
 
-          - name: Create GitHub Release
-          id: create_release
-          uses: actions/create-release@v1
-          env:
-            GITHUB_TOKEN: ${{ secrets.API_TOKEN }}
-          with:
-            tag_name: "v${{ github.run_number }}"
-            release_name: "Helm Charts Release v${{ github.run_number }}"
-            draft: false
-            prerelease: false
-        
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
@@ -101,15 +90,13 @@ jobs:
       - name: Upload Helm Chart Packages to GitHub Release
         if: github.ref == 'refs/heads/main'
         run: |
-            upload_url="${{ steps.create_release.outputs.upload_url }}"
-            upload_url_clean=$(echo "$upload_url" | sed 's/{.*}//')
-            for chart in ./packaged/*.tgz; do
-              name=$(basename "$chart")
-              echo "Uploading $name to $upload_url_clean"
-              curl -X POST \
-                -H "Authorization: token ${{ secrets.API_TOKEN }}" \
-                -H "Content-Type: application/gzip" \
-                --data-binary @"$chart" \
-                "$upload_url_clean?name=$name"
-            done
-        
+          upload_url="${{ steps.create_release.outputs.upload_url }}"
+          upload_url_clean=$(echo "$upload_url" | sed 's/{.*}//')
+          for chart in ./packaged/*.tgz; do
+            name=$(basename "$chart")
+            echo "Uploading $name to $upload_url_clean"
+            curl -X POST \
+              -H "Authorization: token ${{ secrets.API_TOKEN }}" \
+              -H "Content-Type: application/gzip" \
+              --data-binary @"$chart" \
+              "$upload_url_clean?name=$name"
