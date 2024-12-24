@@ -72,6 +72,8 @@ jobs:
             echo "Packaging chart in $chart"
             helm package $chart --destination packaged/
           done
+          echo "Checking contents of packaged directory:"
+          ls -la ./packaged
 
       - name: Push Updated Charts to Repository
         env:
