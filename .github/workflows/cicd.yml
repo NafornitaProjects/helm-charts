@@ -100,3 +100,4 @@ jobs:
               -H "Content-Type: application/gzip" \
               --data-binary @"$chart" \
               "$upload_url_clean?name=$name"
+          done
