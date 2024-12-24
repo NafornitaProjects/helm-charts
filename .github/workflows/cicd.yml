@@ -49,6 +49,11 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
+      - name: Configure Git User
+        run: |
+            git config --global user.name "GitHub Actions"
+            git config --global user.email "actions@github.com"
+        
       - name: Set Execute Permission for Scripts
         run: chmod +x ./scripts/bump_version.sh
 
