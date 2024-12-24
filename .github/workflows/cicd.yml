@@ -51,6 +51,13 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
+      - name: Reinitialize Git
+        run: |
+            git init
+            git remote add origin https://github.com/${{ github.repository }}
+            git fetch --unshallow
+            git checkout $(git rev-parse HEAD)
+
       - name: Configure Git User
         run: |
           git config --global user.name "GitHub Actions"
