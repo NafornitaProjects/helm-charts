@@ -92,11 +92,12 @@ jobs:
         run: |
             upload_url="${{ steps.create_release.outputs.upload_url }}"
             echo "Raw upload URL: $upload_url"
-            
-            # Remove the placeholder from the URL
+        
+            # Remove the placeholder from the upload URL
             upload_url_clean=$(echo "$upload_url" | sed 's/{.*}//')
             echo "Cleaned upload URL: $upload_url_clean"
             
+            # Loop through packaged files and upload each
             for chart in ./packaged/*.tgz; do
               name=$(basename "$chart")
               echo "Uploading $name to $upload_url_clean"
@@ -106,3 +107,4 @@ jobs:
                 --data-binary @"$chart" \
                 "$upload_url_clean?name=$name"
             done
+        
