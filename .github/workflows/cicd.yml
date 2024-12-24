@@ -72,7 +72,7 @@ jobs:
 
       - name: Push Updated Charts to Repository
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.API_TOKEN }}
         run: |
           git push origin main
 
@@ -81,7 +81,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.API_TOKEN }}
         with:
           tag_name: "v${{ github.run_number }}"
           release_name: "Helm Charts Release v${{ github.run_number }}"
@@ -95,7 +95,7 @@ jobs:
             name=$(basename "$chart")
             echo "Uploading $name"
             curl -X POST \
-              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Authorization: token ${{ secrets.API_TOKEN }}" \
               -H "Content-Type: application/gzip" \
               --data-binary @"$chart" \
               ${{ steps.create_release.outputs.upload_url }}?name=$name
