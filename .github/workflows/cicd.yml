@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: helm-charts-repo
-          path: .
+          path: .  # Ensure all necessary files are included
           retention-days: 1
 
   package:
@@ -53,9 +53,9 @@ jobs:
 
       - name: Configure Git User
         run: |
-            git config --global user.name "GitHub Actions"
-            git config --global user.email "actions@github.com"
-        
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
       - name: Set Execute Permission for Scripts
         run: chmod +x ./scripts/bump_version.sh
 
@@ -79,7 +79,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.API_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: "v${{ github.run_number }}"
           release_name: "Helm Charts Release v${{ github.run_number }}"
@@ -88,9 +88,13 @@ jobs:
 
       - name: Upload Helm Chart Packages to GitHub Release
         if: github.ref == 'refs/heads/main'
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./packaged/*.tgz
-          asset_name: ${{ runner.os }}-${{ github.event.repository.name }}-chart.tgz
-          asset_content_type: application/gzip
+        run: |
+          for chart in ./packaged/*.tgz; do
+            name=$(basename "$chart")
+            echo "Uploading $name"
+            curl -X POST \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/gzip" \
+              --data-binary @"$chart" \
+              ${{ steps.create_release.outputs.upload_url }}?name=$name
+          done
