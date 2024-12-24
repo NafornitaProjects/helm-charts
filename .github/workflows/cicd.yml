@@ -98,4 +98,5 @@ jobs:
               -H "Authorization: token ${{ secrets.API_TOKEN }}" \
               -H "Content-Type: application/gzip" \
               --data-binary @"$chart" \
-              ${{ steps.create_release.outputs.upload_url }}?name=$name
+              "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets?name=$name"
+          done
