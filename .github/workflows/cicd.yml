@@ -49,6 +49,9 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
+      - name: Set Execute Permission for Scripts
+        run: chmod +x ./scripts/bump_version.sh
+
       - name: Bump Helm Chart Versions
         run: |
           for chart in $(find . -name Chart.yaml -exec dirname {} \;); do
