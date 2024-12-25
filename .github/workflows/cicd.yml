@@ -46,7 +46,7 @@ jobs:
             CURRENT_VERSION=$(grep '^version:' $chart/Chart.yaml | awk '{print $2}')
             
             # Determine the type of version bump
-            if git log -1 --pretty=%B | grep -q 'BREAKING CHANGE'; then
+            if git log -1 --pretty=%B | grep -q 'MAJOR'; then
               NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{print $1+1".0.0"}')
               echo "Detected BREAKING CHANGE. Bumping to major version $NEW_VERSION."
             elif git log -1 --pretty=%B | grep -q '^feat'; then
@@ -63,7 +63,7 @@ jobs:
             git add $chart/Chart.yaml
           done
 
-          git commit -m "ci: bump chart versions based on commit messages"
+          git commit -m "ci: bump chart versions"
 
       - name: Package Helm Charts
         run: |
