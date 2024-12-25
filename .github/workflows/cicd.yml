@@ -21,7 +21,7 @@ jobs:
       - name: Install Helm
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-      
+
       - name: Install JQ
         run: sudo apt-get install -y jq
 
@@ -44,8 +44,7 @@ jobs:
             echo "Bumping version for $chart"
 
             CURRENT_VERSION=$(grep '^version:' $chart/Chart.yaml | awk '{print $2}')
-            
-            # Determine the type of version bump
+
             if git log -1 --pretty=%B | grep -q 'MAJOR'; then
               NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{print $1+1".0.0"}')
               echo "Detected BREAKING CHANGE. Bumping to major version $NEW_VERSION."
@@ -91,27 +90,23 @@ jobs:
           release_name: "Helm Charts Release v${{ github.run_number }}"
           draft: false
           prerelease: false
-          
+
       - name: Upload Helm Chart Packages to GitHub Release
         if: github.ref == 'refs/heads/main'
         env:
           API_TOKEN: ${{ secrets.API_TOKEN }}
         run: |
-            # Fetch the latest release information
             latest_release=$(curl -s -H "Authorization: token $API_TOKEN" \
               https://api.github.com/repos/${{ github.repository }}/releases/latest)
-        
-            # Extract the upload URL for assets (remove the placeholder)
+
             upload_url=$(echo "$latest_release" | jq -r '.upload_url' | sed 's/{.*}//')
             echo "Upload URL: $upload_url"
-        
-            # Check if the upload URL is valid
+
             if [ -z "$upload_url" ]; then
               echo "Failed to retrieve upload URL from the latest release."
               exit 1
             fi
-        
-            # Loop through packaged files and upload each
+
             for chart in ./packaged/*.tgz; do
               name=$(basename "$chart")
               echo "Uploading $name to $upload_url"
@@ -121,6 +116,3 @@ jobs:
                 --data-binary @"$chart" \
                 "$upload_url?name=$name"
             done
-        
-        
-        
